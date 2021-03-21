@@ -1,14 +1,24 @@
-import bs4 as BeautifulSoup
-import urllib.request
-import pandas as pd
-import numpy as np
-import re
+
+def combinations(iterable, r):
+    # combinations('ABCD', 2) --> AB AC AD BC BD CD
+    # combinations(range(4), 3) --> 012 013 023 123
+    pool = tuple(iterable)
+    n = len(pool)
+    if r > n:
+        return
+    indices = list(range(r))
+    yield tuple(pool[i] for i in indices)
+    while True:
+        for i in reversed(range(r)):
+            if indices[i] != i + n - r:
+                break
+        else:
+            return
+        indices[i] += 1
+        for j in range(i+1, r):
+            indices[j] = indices[j-1] + 1
+        yield tuple(pool[i] for i in indices)
 
 
-url = "https://www.basketball-reference.com/leagues/NBA_2013_totals.html"
-html_content = urllib.request.urlopen(url)
-bsoup = BeautifulSoup.BeautifulSoup(html_content,'html.parser')
-year_list = bsoup.find_all('table',{'id':'totals_stats'})[0].find_all('tbody')[0].find_all('tr',class_ = lambda x: x!= 'thead')
 
-for row in year_list:
-        row_result = list(map(lambda x: x.get_text(),row))
+combinations(['A','B','C','D'],2)
